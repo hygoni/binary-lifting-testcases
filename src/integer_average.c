@@ -12,10 +12,10 @@ int main() {
     }
     printf("\n");
     int average = sum / 10; // Calculate the average
-  
+
     // Print the sum and average
     printf("Sum of the entered numbers: %d\n", sum);
-    printf("Average of the entered numbers: %.2f\n", average);
+    printf("Average of the entered numbers: %d\n", average);
 
     return 0;
 }
