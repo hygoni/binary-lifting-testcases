@@ -1,4 +1,7 @@
 *ProgramData*
-*testdata*
+*src*
+*bin*
+*compile-ir*
+*lift-ir*
 *POJ-104*
 *programs.tar.gz*
