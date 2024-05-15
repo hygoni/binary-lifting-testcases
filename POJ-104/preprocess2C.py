@@ -2,13 +2,11 @@
 # Licensed under the MIT License.
 import os
 import shutil
-from tqdm import tqdm
 
-fold = "testdata"
+fold = "src"
 header = ""
-header += "#include \"iostream\"\n"
-header += "#include \"stdio.h\"\n"
-header += "using namespace std;\n"
+header += "#include <stdio.h>\n"
+header += "#include <math.h>\n"
 
 def files(path):
     g = os.walk(path) 
@@ -28,18 +26,27 @@ def main():
     li = [False for _ in range(10000)]
     cnt = 1
 
-    for i in tqdm(range(1,105),total=104):
+    for i in range(1,105):
         items=files("ProgramData/{}".format(i))
         for item in items:
             num = item.split('/')[2].split('.')[0]
             if li[int(num)]: continue
             
-            f = open(f"testdata/{cnt}.cpp", "w")
-            code = header + open(item, encoding='latin-1').read()
-            f.write(code)
+            code = open(item, encoding='latin-1').read()
+            isC = True
+            
+            for line in code.split('\n'):
+                if "cin" in line or "cout" in "line":
+                    isC = False
+                    break  
+                
+            if isC:
+                f = open(f"{fold}/{cnt}.c", "w")
+                code = header + code
+                f.write(code)
+                cnt += 1
             
             li[int(num)] = True
-            cnt += 1
             
 if __name__ == "__main__":
     main()
