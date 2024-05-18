@@ -1,25 +1,36 @@
 # Compiler and compiler flags
 CC = gcc
 CFLAGS = -Wall -g -std=c11
+MCTOLL = /home/hi-jin/build/bin/llvm-mctoll
 
 # Directories
 SRC_DIR = src
 BIN_DIR = bin
+LIFT_DIR = lift
 
-# Automatically list all c files in the src directory
-SOURCES = $(wildcard $(SRC_DIR)/*.c)
+SOURCES := $(wildcard $(SRC_DIR)/*.c)
+OBJECTS := $(patsubst $(SRC_DIR)/%.c,$(BIN_DIR)/%,$(SOURCES))
 
-# Target executables are the names of the source files without the extension
-TARGETS = $(patsubst $(SRC_DIR)/%.c,$(BIN_DIR)/%,$(SOURCES))
+.PHONY: all compile clean mctoll-lift diff
 
-# Default target
-all: $(TARGETS)
+all: compile mctoll-lift
 
-# Rule to make each target
+compile: $(OBJECTS)
+
 $(BIN_DIR)/%: $(SRC_DIR)/%.c
 	@mkdir -p $(BIN_DIR)
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) -o $@ $<
 
-# Clean rule to remove all builds
+mctoll-lift:
+	@mkdir -p $(LIFT_DIR)
+	@for file in $(BIN_DIR)/*; do \
+		$(MCTOLL) -o $${file}.ll -d -I /usr/include/stdio.h -I /usr/include/stdlib.h -I /usr/include/string.h -I /usr/include/math.h -I /usr/include/time.h $$file; \
+		mv $${file}.ll $(LIFT_DIR)/; \
+	done
+
+diff:
+	@echo $(shell comm -23 <(ls $(BIN_DIR) | sed 's/\.[^.]*$$//' | sort -u) <(ls $(LIFT_DIR) | sed 's/\.[^.]*$$//' | sort -u))
+
 clean:
-	rm -f $(BIN_DIR)/*
+	rm -rf $(BIN_DIR)/*
+	rm -rf $(LIFT_DIR)/*
