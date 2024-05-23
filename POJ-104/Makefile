@@ -1,9 +1,9 @@
 # Compiler and compiler flags
-CC = clang
+CC = clang-17
 CFLAGS = -Wall -g -std=c11
 
 # Lifter and lifter flags
-LIFT = ~/projects/retdec-install/bin/retdec-decompiler
+LIFT = ~/retdec-install/bin/retdec-decompiler
 
 # Directories
 SRC_DIR = src
@@ -21,8 +21,9 @@ LLVMIR_TARGETS = $(patsubst $(SRC_DIR)/%.c,$(LLVMIR_DIR)/%.ll,$(SRC_FILES))
 LIFTIR_TARGETS = $(patsubst $(BIN_DIR)/%,$(LIFTIR_DIR)/%.c,$(wildcard $(BIN_DIR)/*))
 
 # Default target
-all: $(BIN_TARGETS) $(LLVMIR_TARGETS) 
+all: compile lift
 
+compile: $(BIN_TARGETS) $(LLVMIR_TARGETS) 
 # Rule to make each executable target
 $(BIN_DIR)/%: $(SRC_DIR)/%.c
 	@mkdir -p $(BIN_DIR)
@@ -33,9 +34,8 @@ $(LLVMIR_DIR)/%.ll: $(SRC_DIR)/%.c
 	@mkdir -p $(LLVMIR_DIR)
 	-$(CC) $(CFLAGS) -emit-llvm -S $< -o $@
 
-
 # Default target
-all: $(LIFTIR_TARGETS)
+lift: $(LIFTIR_TARGETS)
 
 # Rule to lift binary to decompiled C
 $(LIFTIR_DIR)/%.c: $(BIN_DIR)/%
