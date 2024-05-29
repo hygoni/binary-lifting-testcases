@@ -31,7 +31,7 @@ MASK_LIFTIR_TARGETS = $(patsubst $(LIFTIR_DIR)/%.ll,$(MASK_LIFTIR_DIR)/%.ll,$(wi
 
 # Default target
 all: compile lift pass
-
+ 
 compile: $(BIN_TARGETS) $(LLVMIR_TARGETS) 
 # Rule to make each executable target
 $(BIN_DIR)/%: $(SRC_DIR)/%.c
